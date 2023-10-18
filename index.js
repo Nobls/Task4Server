@@ -3,10 +3,7 @@ import mongoose from "mongoose";
 import cors from 'cors';
 import dotenv from 'dotenv'
 import * as UserController from "./controllers/UserController.js";
-
-/*import {checkAuth,} from "./utils/index.js";*/
-
-
+import {checkAuth} from "./utils/index.js";
 
 const app = express();
 dotenv.config()
@@ -23,8 +20,9 @@ mongoose
 app.use(express.json());
 app.use(cors());
 
-app.post('/registration', UserController.registration);
-app.post('/login', UserController.login);
+app.post('/auth/registration', UserController.registration);
+app.post('/auth/login', UserController.login);
+app.get('/auth/user', checkAuth, UserController.getMe);
 
 app.listen(PORT, (err) => {
     if (err) {

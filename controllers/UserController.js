@@ -97,3 +97,24 @@ export const login = async (req, res) => {
         })
     }
 };
+
+export const getMe = async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.userId);
+
+        if (!user) {
+            return res.status(404).join({
+                message: 'Пользователь не найден',
+            })
+        }
+
+        const {password, ...userData} = user._doc;
+
+        res.json(userData);
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: 'Нет доступа',
+        })
+    }
+};
