@@ -24,6 +24,7 @@ app.use(express.json());
 app.use(cors());
 
 app.post('/registration', UserController.registration);
+app.post('/login', UserController.login);
 
 app.listen(PORT, (err) => {
     if (err) {

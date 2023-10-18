@@ -55,3 +55,45 @@ export const registration = async (req, res) => {
         })
     }
 };
+
+export const login = async (req, res) => {
+    try {
+        const {email, password} = req.body
+
+        const user = await UserModel.findOne({email})
+
+        if (!user){
+            return res.json({
+                message: 'Такого юзера не существует.'
+            })
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(password, user._doc.password)
+
+        if (!isPasswordCorrect) {
+            return res.json({
+                message: 'Неверный пароль'
+            })
+        }
+
+        const token = jwt.sign(
+            {
+                _id: user._id
+            },
+            JWT_KEY,
+            {expiresIn: '30d'}
+        )
+
+        res.json({
+            token,
+            user,
+            message: 'Вы авторизовались'
+        })
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: 'Не удалось авторизоваться',
+        })
+    }
+};
