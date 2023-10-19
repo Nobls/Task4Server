@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/User.js";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import {format} from "date-fns";
 
 
 dotenv.config()
@@ -76,6 +77,9 @@ export const login = async (req, res) => {
             })
         }
 
+        user.lastLoginDate = new Date();
+        await user.save();
+
         const token = jwt.sign(
             {
                 _id: user._id
@@ -118,3 +122,41 @@ export const getMe = async (req, res) => {
         })
     }
 };
+
+export const getAll = async (req, res) => {
+    try {
+        const users = await UserModel.find()
+
+        const formattedUsers = users.map(user => ({
+            ...user._doc,
+            registrationDate: format(user.registrationDate, 'dd.MM.yyyy, HH:mm:ss'),
+            lastLoginDate: user.lastLoginDate ? format(user.lastLoginDate, 'dd.MM.yyyy, HH:mm:ss') : null,
+        }));
+
+        res.json(formattedUsers)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: 'Не удалось получить пользователей',
+        })
+    }
+}
+
+export const blockUser = async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'Пользователь не найден' });
+        }
+
+        user.status = 'blocked';
+        user.save();
+
+        return res.json({ message: 'Статус пользователя успешно изменен на "blocked"' });
+    } catch (error) {
+        return res.status(500).json({ message: 'Произошла ошибка при изменении статуса пользователя' });
+    }
+}

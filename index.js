@@ -23,6 +23,8 @@ app.use(cors());
 app.post('/auth/registration', UserController.registration);
 app.post('/auth/login', UserController.login);
 app.get('/auth/user', checkAuth, UserController.getMe);
+app.get('/auth/users', checkAuth, UserController.getAll);
+app.post('/block/:userId', checkAuth, UserController.blockUser);
 
 app.listen(PORT, (err) => {
     if (err) {
