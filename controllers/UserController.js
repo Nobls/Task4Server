@@ -69,6 +69,12 @@ export const login = async (req, res) => {
             })
         }
 
+        if (user.status === 'blocked') {
+            return res.status(403).json({
+                message: 'Ваш аккаунт заблокирован.'
+            });
+        }
+
         const isPasswordCorrect = await bcrypt.compare(password, user._doc.password)
 
         if (!isPasswordCorrect) {
@@ -160,3 +166,38 @@ export const blockUser = async (req, res) => {
         return res.status(500).json({ message: 'Произошла ошибка при изменении статуса пользователя' });
     }
 }
+
+export const unBlockUser = async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'Пользователь не найден' });
+        }
+
+        user.status = 'active';
+        user.save();
+
+        return res.json({ message: 'Статус пользователя успешно изменен на "blocked"' });
+    } catch (error) {
+        return res.status(500).json({ message: 'Произошла ошибка при изменении статуса пользователя' });
+    }
+}
+
+export const remove = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        const deletedUser = await UserModel.findByIdAndRemove(userId);
+
+        if (deletedUser) {
+            res.json({ message: 'Пользователь успешно удален' });
+        } else {
+            res.status(404).json({ error: 'Пользователь не найден' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Произошла ошибка при удалении пользователя' });
+    }
+};
