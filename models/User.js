@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     position: {type: String},
     registrationDate: { type: Date, default: Date.now },
-    lastLoginDate: { type: Date },
+    lastLoginDate: { type: Date,  default: Date.now },
     status: { type: String, enum: ['active', 'blocked'], default: 'active' }
 });
 

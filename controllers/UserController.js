@@ -149,40 +149,44 @@ export const getAll = async (req, res) => {
 }
 
 export const blockUser = async (req, res) => {
-    const userId = req.params.userId;
+    const userIds = req.body.userIds
 
     try {
-        const user = await UserModel.findById(userId);
+        const users = await UserModel.find({ _id: { $in: userIds } })
 
-        if (!user) {
-            return res.status(404).json({ message: 'Пользователь не найден' });
+        if (users.length === 0) {
+            return res.status(404).json({ message: 'Пользователи не найдены' })
         }
 
-        user.status = 'blocked';
-        user.save();
+        for (const user of users) {
+            user.status = 'blocked'
+            await user.save()
+        }
 
-        return res.json({ message: 'Статус пользователя успешно изменен на "blocked"' });
+        return res.json({ message: 'Статус пользователей успешно изменен на "blocked"' })
     } catch (error) {
-        return res.status(500).json({ message: 'Произошла ошибка при изменении статуса пользователя' });
+        return res.status(500).json({ message: 'Произошла ошибка при изменении статуса пользователей' })
     }
 }
 
 export const unBlockUser = async (req, res) => {
-    const userId = req.params.userId;
+    const userIds = req.body.userIds
 
     try {
-        const user = await UserModel.findById(userId);
+        const users = await UserModel.find({ _id: { $in: userIds } })
 
-        if (!user) {
-            return res.status(404).json({ message: 'Пользователь не найден' });
+        if (users.length === 0) {
+            return res.status(404).json({ message: 'Пользователи не найдены' })
         }
 
-        user.status = 'active';
-        user.save();
+        for (const user of users) {
+            user.status = 'active'
+            await user.save()
+        }
 
-        return res.json({ message: 'Статус пользователя успешно изменен на "blocked"' });
+        return res.json({ message: 'Статус пользователей успешно изменен на "unblocked"' })
     } catch (error) {
-        return res.status(500).json({ message: 'Произошла ошибка при изменении статуса пользователя' });
+        return res.status(500).json({ message: 'Произошла ошибка при изменении статуса пользователей' })
     }
 }
 

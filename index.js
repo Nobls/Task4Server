@@ -24,8 +24,8 @@ app.post('/auth/registration', UserController.registration);
 app.post('/auth/login', UserController.login);
 app.get('/auth/user', checkAuth, UserController.getMe);
 app.get('/auth/users', checkAuth, UserController.getAll);
-app.post('/block/:userId', checkAuth, UserController.blockUser);
-app.post('/unblock/:userId', checkAuth, UserController.unBlockUser);
+app.post('/block', checkAuth, UserController.blockUser);
+app.post('/unblock', checkAuth, UserController.unBlockUser);
 app.delete('/delete/:userId', checkAuth, UserController.remove);
 
 app.listen(PORT, (err) => {
