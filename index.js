@@ -8,12 +8,10 @@ import {checkAuth} from "./utils/index.js";
 const app = express();
 dotenv.config()
 
-const PORT = process.env.PORT
-const DB_USER = process.env.DB_USER
-const DB_PASSWORD = process.env.DB_PASSWORD
+const MONGODB_URL = process.env.MONGODB_URL
 
 mongoose
-    .connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.qne5qdy.mongodb.net/?retryWrites=true&w=majority`)
+    .connect(MONGODB_URL)
     .then(() => console.log('DB Ok'))
     .catch((err) => console.log('DB error', err))
 
@@ -28,7 +26,7 @@ app.post('/block', checkAuth, UserController.blockUser);
 app.post('/unblock', checkAuth, UserController.unBlockUser);
 app.delete('/delete/:userId', checkAuth, UserController.remove);
 
-app.listen(PORT, (err) => {
+app.listen(5555, (err) => {
     if (err) {
         return console.log(err)
     }

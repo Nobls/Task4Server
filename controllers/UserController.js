@@ -7,8 +7,6 @@ import {format} from "date-fns";
 
 dotenv.config()
 
-const JWT_KEY = process.env.JWT_KEY
-
 export const registration = async (req, res) => {
     try {
         const { username,email, password, position } = req.body
@@ -36,7 +34,7 @@ export const registration = async (req, res) => {
             {
                 _id: newUser._id,
             },
-            JWT_KEY,
+            'secretKey1234',
             {
                 expiresIn: '30d'
             }
@@ -90,7 +88,7 @@ export const login = async (req, res) => {
             {
                 _id: user._id
             },
-            JWT_KEY,
+            'secretKey1234',
             {expiresIn: '30d'}
         )
 
